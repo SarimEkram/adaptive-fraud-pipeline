@@ -176,7 +176,7 @@ def _coords_at(customer: Customer, place: str) -> tuple[float, float]:
     return PLACES[place].lat, PLACES[place].lon
 
 
-def _new_uuid(rng: np.random.Generator) -> UUID:
+def new_uuid(rng: np.random.Generator) -> UUID:
     return UUID(bytes=rng.bytes(16), version=4)  # random but reproducible from the seed
 
 
@@ -252,7 +252,7 @@ def normal_transaction(
         channel, device = Channel.CARD_PRESENT, None
 
     return Transaction(
-        txn_id=_new_uuid(rng),
+        txn_id=new_uuid(rng),
         card_id=customer.card_id,
         customer_id=customer.customer_id,
         amount_cents=amount,
@@ -289,7 +289,7 @@ def burst_transactions(
         merchant = _choose(rng, familiar)
         txns.append(
             Transaction(
-                txn_id=_new_uuid(rng),
+                txn_id=new_uuid(rng),
                 card_id=customer.card_id,
                 customer_id=customer.customer_id,
                 amount_cents=int(rng.integers(250, 701)),
