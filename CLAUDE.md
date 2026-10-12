@@ -23,6 +23,8 @@ Each service README marks files as **you write** (the author) or **Claude can he
 
 **Current working mode (author's decision, 2026-10-12): Claude writes all the code, including in "you write" files. The author must understand every line.** This applies to all phases until the author changes it.
 
+**Working style (author's decision, 2026-10-12): do not ask the author questions.** No quizzes, no restate-the-idea prompts, no "which do you prefer" menus. Decide yourself, and list every decision you made under a "Decisions I made" heading in your summary so the author can veto any of them. Step 2 below and the "Understanding checks" section are suspended until the author turns them back on. Line-by-line explanations still happen. A phase is still not marked complete until the author says they can answer its "must explain" questions; do not turn that into a quiz, just leave the phase open and say so.
+
 For every piece of code you write, in any file:
 
 1. **Explain it line by line** afterwards, in plain language, with short analogies. Assume the author is new to Kafka, Redis, FastAPI and the ML side; define terms the first time they appear.
