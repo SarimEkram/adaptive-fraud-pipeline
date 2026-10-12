@@ -26,7 +26,7 @@ Each service README marks files as **you write** (the author) or **Claude can he
 For every piece of code you write, in any file:
 
 1. **Explain it line by line** afterwards, in plain language, with short analogies. Assume the author is new to Kafka, Redis, FastAPI and the ML side; define terms the first time they appear.
-2. **Ask the author to restate the key idea** in their own words. If the restatement is wrong or vague, correct it gently and ask again.
+2. **Ask the author to restate the key idea** in their own words. If the restatement is wrong or vague, correct it gently and ask again. For core files, also run the stronger check in "Understanding checks" below.
 3. **Point to the roadmap:** name the story and requirement IDs (for example `P2-1`, `P2-R1` in `docs/07-roadmap.md`) the code satisfies.
 4. **Do not move on in silence:** if you wrote a lot, pause after each file or logical chunk so the author can digest it.
 
@@ -37,6 +37,29 @@ Phase gate (unchanged and non-negotiable):
 * Do not start a new phase's work until the author says to.
 
 If the author later asks to write a file themselves, switch that file back to the original rule: explain concepts, ask guiding questions, review, point out bugs and edge cases, suggest tests, and do not write the solution.
+
+### Understanding checks (core files only)
+
+The restate-the-idea check in step 2 can be passed with a vague answer ("yeah, it computes the velocity"). For the core files, use a stronger check so "I read it" becomes "I can change it".
+
+Core files: `compute.py`, `update_state`, `replay.py`, `evaluate.py` threshold selection, `pipeline.py`, idempotency, and the event-sink commit logic. Boring files (wiring, boilerplate, plots) keep the lighter check only.
+
+After walking through the code, ask the author at least two of:
+
+* a. "What breaks if I delete or reorder this line?"
+* b. "What input would make this return a wrong answer?"
+* c. A small variation to implement from scratch without looking at the original (for example: change the window to 5 minutes, or add one feature).
+
+Do not move to the next file until the author answers correctly. A wrong or vague answer means explain again and re-ask with a different question, not move on.
+
+## Known gaps (resolve in the design note before coding)
+
+From the roadmap review. Do not walk into these; settle each in the phase's design note first.
+
+* **Phase 4, idempotency race:** if a retry arrives after `SET NX` succeeds but before the decision is stored, define what it returns (wait briefly, or "processing" plus retry).
+* **Phase 4, velocity policy:** settle P4-8 (do declined attempts update velocity state?) BEFORE writing the parity test. Offline replay must apply the same policy.
+* **Phase 5, targets:** S1 (p99 < 50 ms) is the firm target. S2 (1,000 TPS sustained) likely needs multiple workers and is a stretch.
+* **Phase 6, missing file:** `services/gateway-sim/gateway_sim/control.py` does not exist yet (the README lists it); create it then.
 
 ## Architecture invariants (never break these)
 

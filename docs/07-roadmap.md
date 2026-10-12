@@ -62,10 +62,10 @@ Dependencies are strictly sequential: each phase consumes the output of the one 
 ### Checklist
 
 - [x] Git repo initialised, `origin` added, scaffold pushed to `main`
-- [ ] `make up` healthy (Docker running)
-- [ ] `make topics` creates all four topics
-- [ ] `make test` and `make lint` pass locally
-- [ ] CI green on GitHub
+- [x] `make up` healthy (Docker running). Note: `event-sink` exits immediately until Phase 4 (its `main()` is a stub that raises `NotImplementedError`); this is expected.
+- [x] `make topics` creates all four topics (safe to re-run)
+- [x] `make test` and `make lint` pass locally
+- [x] CI green on GitHub (commit `0323179`)
 - [ ] All docs read
 
 ### Exit criteria
