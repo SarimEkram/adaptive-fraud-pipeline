@@ -101,7 +101,7 @@ def test_channel_rules_hold() -> None:
 
 def test_amounts_are_integer_cents_and_plausible() -> None:
     txns = _run()
-    assert all(isinstance(t.amount_cents, int) and t.amount_cents >= 200 for t in txns)
+    assert all(isinstance(t.amount_cents, int) and t.amount_cents >= 100 for t in txns)
     assert 500 <= median(t.amount_cents for t in txns) <= 2_000  # roughly $5 to $20
     big = sum(t.amount_cents >= 6_000 for t in txns) / len(txns)
     assert 0.002 < big < 0.08  # large purchases exist but are rare

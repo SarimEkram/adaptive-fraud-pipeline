@@ -21,7 +21,7 @@ Each phase has a goal, user stories with acceptance criteria, requirements, test
 | Phase | Name | Weeks | Status | Traces |
 |---|---|---|---|---|
 | 0 | Foundations | 1 | Complete (2026-10-12) | S7 (start) |
-| 1 | Synthetic world | 2 to 3 | Not started | S3 (data) |
+| 1 | Synthetic world | 2 to 3 | Code complete; awaiting the author's must-explain sign-off | S3 (data) |
 | 2 | Offline model | 4 to 5 | Not started | S3, S4 (partial) |
 | 3 | Scoring service | 6 to 7 | Not started | S1, S4 |
 | 4 | Real-time pipeline | 8 to 10 | Not started | S2 |
@@ -131,8 +131,10 @@ Hot vs cold path and why the split exists (ADR-0002); why features are computed 
 
 ### Exit criteria
 
-* Fraud rate about 1%.
-* A plot of normal vs fraud spending (amount, hour of day, distance from home) looks plausible.
+* [x] Fraud rate about 1% (measured 1.00% on the default run).
+* [x] A plot of normal vs fraud spending looks plausible: `docs/images/phase1-spending.png` shows amount and hour of day. The distance-from-home plot waits for Phase 2, because distance is feature logic and belongs in `fraudcore/features/geo.py` (invariant 1).
+* [x] Stories P1-1 to P1-7 built and tested (merchants, customers, four patterns, ground truth, seeded CLI). Results and the "still too easy on amount" finding are in the design note.
+* [ ] Must-explain sign-off from the author (below). Phase 1 stays open until then.
 
 ### Must explain
 

@@ -62,7 +62,9 @@ def test_travel_is_far_in_person_and_large() -> None:
         assert 1 <= len(txns) <= 3
         for t in txns:
             assert t.channel == Channel.CARD_PRESENT and t.device_id is None
-            assert 15_000 <= t.amount_cents <= 60_000
+            hard = txns[0].event_time - NOW >= timedelta(hours=3)
+            low, high = (6_000, 30_000) if hard else (15_000, 60_000)
+            assert low <= t.amount_cents <= high
             assert _km(victim.home_lat, victim.home_lon, t.lat, t.lon) > 300
 
 
@@ -160,7 +162,7 @@ def test_takeover_is_online_new_device_and_within_three_hours() -> None:
         for t in txns:
             assert t.channel == Channel.ECOMMERCE
             assert t.device_id not in victim.devices
-            assert 4_000 <= t.amount_cents <= 40_000
+            assert 2_500 <= t.amount_cents <= 40_000
 
 
 def test_takeover_easy_cases_are_large_and_sometimes_risky() -> None:
@@ -204,7 +206,7 @@ def test_compromise_is_quiet_online_and_unfamiliar() -> None:
             assert t.channel == Channel.ECOMMERCE
             assert t.device_id not in victim.devices
             assert t.merchant_id not in victim.favourite_merchants
-            assert 8_000 <= t.amount_cents <= 25_000
+            assert 3_000 <= t.amount_cents <= 25_000
 
 
 def test_far_places_exist_for_every_pattern() -> None:

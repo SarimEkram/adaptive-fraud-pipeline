@@ -12,7 +12,7 @@ Binary classification: probability that a card authorization is fraudulent.
 
 ## Data
 
-Synthetic, from gateway-sim. Fraud rate target about 0.5 to 1%. Fraud patterns: stolen card travel, card testing, account takeover, merchant compromise. Document the generator version used for every trained model.
+Synthetic, from gateway-sim (generator version 1.0.0, recorded in the Parquet file's metadata along with seed, customers, days and start). Fraud rate target about 0.5 to 1%; the default run is 1%. Fraud patterns: stolen card travel, card testing, account takeover, merchant compromise, each with an easy and a hard variant (design note: `docs/design-notes/phase-1-synthetic-world.md`). Ground truth columns (`is_fraud`, `fraud_pattern`, `attack_id`, `breached_merchant_id`) are for labels and analysis only, never features. Document the generator version used for every trained model.
 
 ## Split
 

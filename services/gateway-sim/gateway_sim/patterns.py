@@ -89,9 +89,10 @@ class StolenCardTravel(FraudPattern):
     """Card used far from home shortly after a normal purchase. Signal: implied speed.
 
     `now` must be the time of the victim's latest genuine in-person purchase at home; the
-    attack starts a little after it. Easy: 20 to 90 minutes later, so the travel is
-    impossible. Hard: 3 to 6 hours later, which a flight could just about explain, so the
-    model must also lean on the large amount and the kind of shop.
+    attack starts a little after it. Easy: 20 to 90 minutes later with $150 to $600
+    purchases, so the travel is impossible. Hard: 3 to 6 hours later with $60 to $300
+    purchases, which a flight and an ordinary big buy could explain, so the model needs
+    more than speed and amount.
     """
 
     name = "stolen_card_travel"
@@ -109,7 +110,7 @@ class StolenCardTravel(FraudPattern):
         for _ in range(_between(rng, 1, 3)):
             kind = rng.choice(["electronics", "clothing", "convenience"], p=[0.6, 0.2, 0.2])
             shops = [m for m in catalog.local[city] if m.kind == kind]  # convenience: gift cards
-            amount = _between(rng, 15_000, 60_000)
+            amount = _between(rng, 6_000, 30_000) if hard else _between(rng, 15_000, 60_000)
             txns.append(_make(victim, _choose(rng, shops), amount, when, rng))
             when += timedelta(minutes=_between(rng, 5, 25))
         return txns
@@ -178,7 +179,7 @@ class AccountTakeover(FraudPattern):
     """New device, unfamiliar shops, large amounts. Signal: is_new_device + mcc risk.
 
     `now` is when the intruder gets in. Easy: 1 to 4 orders of $100 to $400 over up to three
-    hours, 40% of them at crypto, gambling and similar shops. Hard: modest $40 to $90 orders
+    hours, 40% of them at crypto, gambling and similar shops. Hard: modest $25 to $90 orders
     in ordinary categories, so mostly the new device stands out. The intruder connects from
     far away half the time and through a local connection the other half.
     """
@@ -201,7 +202,7 @@ class AccountTakeover(FraudPattern):
                 if m is not None and m.online
             }
             pool = [m for m in catalog.online if m.kind in usual_kinds] or catalog.online
-            amounts = [_between(rng, 4_000, 9_000) for _ in range(count)]
+            amounts = [_between(rng, 2_500, 9_000) for _ in range(count)]
         else:
             pool = _unfamiliar(victim, catalog.online)
             amounts = [_between(rng, 10_000, 40_000) for _ in range(count)]
@@ -219,7 +220,7 @@ class MerchantCompromise(FraudPattern):
     """Stolen card details from a breached shop, used quietly online. Signal: across cards.
 
     The campaign (which shop was breached, and which customers had used it) is chosen by the
-    caller; this produces one victim's misuse: one or two $80 to $250 online purchases at an
+    caller; this produces one victim's misuse: one or two $30 to $250 online purchases at an
     unfamiliar shop from a new device, within six hours of `now`. Taken alone it looks like
     a mild account takeover. The real clue is that many victims share one shop in their past.
     """
@@ -238,7 +239,7 @@ class MerchantCompromise(FraudPattern):
                 _make(
                     victim,
                     _choose(rng, pool),
-                    _between(rng, 8_000, 25_000),
+                    _between(rng, 3_000, 25_000),
                     when,
                     rng,
                     where,

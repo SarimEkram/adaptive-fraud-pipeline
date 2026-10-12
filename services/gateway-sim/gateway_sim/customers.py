@@ -28,7 +28,7 @@ _TRIP_EPOCH = datetime(2025, 1, 1, tzinfo=UTC)
 _DEPART_HOUR_UTC = 11  # 06:00 at UTC-5
 _TRANSIT = timedelta(hours=6)
 
-_MIN_REGULAR_CENTS = 200  # honest purchases are at least $2, so "under $2" stays suspicious
+_MIN_REGULAR_CENTS = 100  # honest purchases can be small ($1 transit fares), just rarely
 _MAX_REGULAR_CENTS = 60_000
 _BIG_MEAN_CENTS = 15_000  # the $150 headphones
 _BIG_MIN_CENTS = 6_000
@@ -308,7 +308,7 @@ def burst_transactions(
     return txns
 
 
-def _random_time_on(customer: Customer, day: date, rng: np.random.Generator) -> datetime:
+def random_time_on(customer: Customer, day: date, rng: np.random.Generator) -> datetime:
     """A moment on `day` (Toronto clock) drawn from the customer's hourly habits, in UTC."""
     hour = int(rng.choice(24, p=customer.hour_weights))
     local = datetime.combine(
@@ -323,9 +323,9 @@ def daily_transactions(
     """All honest transactions for one customer on one day, in time order."""
     txns: list[Transaction] = []
     for _ in range(int(rng.poisson(customer.txns_per_day))):
-        txn = normal_transaction(customer, _random_time_on(customer, day, rng), rng, catalog)
+        txn = normal_transaction(customer, random_time_on(customer, day, rng), rng, catalog)
         if txn is not None:
             txns.append(txn)
     if rng.random() < _BURST_PROB:
-        txns.extend(burst_transactions(customer, _random_time_on(customer, day, rng), rng, catalog))
+        txns.extend(burst_transactions(customer, random_time_on(customer, day, rng), rng, catalog))
     return sorted(txns, key=lambda t: t.event_time)

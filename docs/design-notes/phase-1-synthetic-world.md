@@ -29,7 +29,7 @@ For each: what happens, what signal makes it detectable, what fraction of traffi
 1. Stolen card travel (proposed by Claude at the author's request; author to review):
    * What happens: after a normal in-person purchase in Toronto, the same card is used in person in a far-away city (for example Vancouver, Calgary or Montreal) 20 to 90 minutes later. One to three purchases, mostly electronics and gift cards, $150 to $600 each.
    * Signal: implied speed (distance divided by time since the last purchase), plus amount far above the customer's norm.
-   * Harder variant: some cases use longer gaps (a few hours) so the speed is only borderline plausible. The model then also needs amount and merchant type.
+   * Harder variant: longer gaps (3 to 6 hours) and smaller purchases ($60 to $300, against $150 to $600 for the easy variant), so the speed is only borderline plausible and the amount looks like an ordinary big buy. The model then needs more than speed and amount. (Amounts changed after the first plot, see Results.)
    * Legitimate look-alike: a real trip has a believable journey time between the last home purchase and the first one in the new city, and spending afterwards fits the customer.
    * Share: about 30% of fraud cases.
 2. Card testing (proposed by Claude at the author's request; author to review):
@@ -41,11 +41,11 @@ For each: what happens, what signal makes it detectable, what fraction of traffi
 3. Account takeover (proposed by Claude at the author's request; author to review):
    * What happens: over a few hours, 1 to 4 online orders at merchants the card has never used, from a device never seen on this card, $100 to $400 each.
    * Signal: new device plus new merchant plus unusual amount (`is_new_device`, `is_new_merchant`, `amount_zscore`). No single one is conclusive.
-   * Harder variant: moderate amounts ($40 to $90) in a category the customer sometimes uses, so only the new device stands out.
+   * Harder variant: moderate amounts ($25 to $90) in a category the customer sometimes uses, so only the new device stands out.
    * Legitimate look-alike: the customer gets a new phone and buys $150 headphones at a merchant they have used before.
    * Share: about 25% of fraud cases.
 4. Merchant compromise (proposed by Claude at the author's request; author to review):
-   * What happens: a small merchant is breached. Over a few days, many different cards that used it later show fraud elsewhere: one $80 to $250 online purchase each at an unfamiliar merchant.
+   * What happens: a small merchant is breached. Over a few days, many different cards that used it later show fraud elsewhere: one $30 to $250 online purchase each at an unfamiliar merchant (changed from $80 to $250 after the first plot).
    * Signal: hard from a single card; visible across cards that share a merchant. Treated as a stretch goal in the roadmap.
    * Legitimate look-alike: an ordinary busy merchant that many customers happen to use.
    * Share: about 10% of fraud cases.
@@ -77,3 +77,27 @@ Proposed by Claude; author to review. These map to the roadmap exit criteria and
 * **Plots look plausible.** Normal vs fraud: amount distribution, hour of day, distance from home. Honest trips and large purchases appear in the normal data, and the look-alikes overlap fraud somewhat.
 * **No hidden giveaway.** Normal and fraud rows come from the same code path and schema.
 * **Author can explain it.** What makes each pattern detectable, and why realistic normal behaviour matters as much as the fraud (roadmap "must explain").
+
+## Results (generator 1.0.0, 1,000 customers, 30 days, seed 42)
+
+`python -m gateway_sim.main --offline` then `python notebooks/phase1_plots.py`. Added after the code was written; the author's earlier review covered the sections above, not these changes.
+
+![Normal vs fraud spending](../images/phase1-spending.png)
+
+| Check | Result |
+|---|---|
+| Fraud rate | 1.00% of 63,073 transactions |
+| Fraud cases by pattern | 134 attacks: travel 43, card testing 42, takeover 36, compromise 13 (breaches of several cards each) |
+| Same seed, same file | byte-identical Parquet (tested) |
+| Honest typical purchase | median about $10, 90% under $35, 54% online, about 3.6% made while travelling |
+| Ground truth | `is_fraud`, `fraud_pattern`, `attack_id`, `breached_merchant_id` in their own columns |
+
+What the first plot taught, and what changed:
+
+* **Honest sub-$2 purchases did not exist.** The first version forbade them, so any sub-$2 charge was fraud. The floor is now $1, and about 1.2% of honest purchases are under $2.
+* **Attacks happened at uniformly random times.** Honest shopping peaks at lunch and early evening, so 3 am was a strong clue. Now 60% of attacks are timed like the victim's own shopping, and the hour of day gives little away.
+* **Hard variants overlapped too little.** Lowered the amounts of the hard variants (travel $60 to $300, takeover from $25, compromise from $30).
+
+Still too easy on amount, to be tested in Phase 2: 58% of fraud transactions are under $2 (honest: 1.2%), and only about 11% of fraud falls inside the $2 to $103 range that holds 96% of honest spending. Card testing is mostly a stream of tiny charges, so some of this is real, and 70% of fraud transactions are card-testing probes. If the Phase 2 model scores near 0.99 PR-AUC, check this first (raise the hard share, or fold fraud into more ordinary-looking amounts) before trusting the number.
+
+Other limits: all amounts are in CAD, and times use fixed UTC offsets with no daylight saving. Online purchases carry the customer's own location, as an IP lookup would. Only about 134 fraud cases exist at this size, so Phase 2 will likely want more customers or days.

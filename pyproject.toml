@@ -3,7 +3,7 @@
 name = "adaptive-fraud-pipeline-dev"
 version = "0.0.0"
 requires-python = ">=3.12"
-dependencies = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.6", "locust>=2.31"]
+dependencies = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.6", "locust>=2.31", "matplotlib>=3.9"]
 
 [tool.ruff]
 line-length = 100
