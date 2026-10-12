@@ -2,7 +2,7 @@
 
 Scores card transactions in real time (p99 under 50 ms), explains every decision, and adapts on its own when fraud patterns change.
 
-> Status: Phase 0 (scaffolding). See [the roadmap](docs/07-roadmap.md).
+> Status: Phase 0 complete; Phase 1 (synthetic world) not started. See [the roadmap](docs/07-roadmap.md).
 
 ## What it does
 

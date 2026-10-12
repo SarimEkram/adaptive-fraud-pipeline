@@ -20,7 +20,7 @@ Each phase has a goal, user stories with acceptance criteria, requirements, test
 
 | Phase | Name | Weeks | Status | Traces |
 |---|---|---|---|---|
-| 0 | Foundations | 1 | In progress | S7 (start) |
+| 0 | Foundations | 1 | Complete (2026-10-12) | S7 (start) |
 | 1 | Synthetic world | 2 to 3 | Not started | S3 (data) |
 | 2 | Offline model | 4 to 5 | Not started | S3, S4 (partial) |
 | 3 | Scoring service | 6 to 7 | Not started | S1, S4 |
@@ -66,7 +66,8 @@ Dependencies are strictly sequential: each phase consumes the output of the one 
 - [x] `make topics` creates all four topics (safe to re-run)
 - [x] `make test` and `make lint` pass locally
 - [x] CI green on GitHub (commit `0323179`)
-- [ ] All docs read
+- [x] All docs read (author confirmed)
+- [x] Hot vs cold path and features-before-state rule explained by the author
 
 ### Exit criteria
 

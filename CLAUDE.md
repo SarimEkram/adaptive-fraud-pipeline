@@ -15,7 +15,7 @@ A real-time card fraud detection system, built as a learning project. The author
 
 ## Current status
 
-Phase: 0 (scaffolding). Update this line when a phase is completed.
+Phase: 1 (synthetic world), not started. Phase 0 completed 2026-10-12. Update this line when a phase is completed.
 
 ## Learning mode: ownership rules (most important section)
 
