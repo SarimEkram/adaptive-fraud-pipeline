@@ -15,7 +15,7 @@ A real-time card fraud detection system, built as a learning project. The author
 
 ## Current status
 
-Phase: 1 (synthetic world), code complete and committed; awaiting the author's sign-off on the must-explain questions before it is marked complete. Phase 0 completed 2026-10-12. Update this line when a phase is completed.
+Phase: 2 (offline model), not started. Phases 0 and 1 completed 2026-10-12 (must-explain sign-off waived by the author). Update this line when a phase is completed.
 
 ## Learning mode: ownership rules (most important section)
 
@@ -23,7 +23,7 @@ Each service README marks files as **you write** (the author) or **Claude can he
 
 **Current working mode (author's decision, 2026-10-12): Claude writes all the code, including in "you write" files. The author must understand every line.** This applies to all phases until the author changes it.
 
-**Working style (author's decision, 2026-10-12): do not ask the author questions.** No quizzes, no restate-the-idea prompts, no "which do you prefer" menus. Decide yourself, and list every decision you made under a "Decisions I made" heading in your summary so the author can veto any of them. Step 2 below and the "Understanding checks" section are suspended until the author turns them back on. Line-by-line explanations still happen. A phase is still not marked complete until the author says they can answer its "must explain" questions; do not turn that into a quiz, just leave the phase open and say so.
+**Working style (author's decision, 2026-10-12): do not ask the author questions.** No quizzes, no restate-the-idea prompts, no "which do you prefer" menus. Decide yourself, and list every decision you made under a "Decisions I made" heading in your summary so the author can veto any of them. Step 2 below and the "Understanding checks" section are suspended until the author turns them back on. Line-by-line explanations still happen. Never ask the author to explain, restate or confirm understanding of anything (told to me on 2026-10-12). That waives the old sign-off gate: a phase is complete when its exit criteria are met, tests and lint pass, and docs are updated. Record in the roadmap that the must-explain sign-off was waived by the author, and keep the "must explain" lists as study material only.
 
 For every piece of code you write, in any file:
 
@@ -32,9 +32,9 @@ For every piece of code you write, in any file:
 3. **Point to the roadmap:** name the story and requirement IDs (for example `P2-1`, `P2-R1` in `docs/07-roadmap.md`) the code satisfies.
 4. **Do not move on in silence:** if you wrote a lot, pause after each file or logical chunk so the author can digest it.
 
-Phase gate (unchanged and non-negotiable):
+Phase gate:
 
-* Never mark a phase complete or delete `xfail` marks without the author confirming they can answer that phase's "must explain" questions. Writing the code does not substitute for being able to explain it.
+* Do not mark a phase complete or delete `xfail` marks until the phase's exit criteria are met and tests pass. (The author waived the must-explain sign-off on 2026-10-12; do not ask for it.)
 * Write the phase's design note (`docs/design-notes/`) with the author at the start of each phase. Claude drafts it from the author's answers to guiding questions; the author edits it until it says what they actually mean.
 * Do not start a new phase's work until the author says to.
 

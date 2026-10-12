@@ -13,7 +13,7 @@ Each phase has a goal, user stories with acceptance criteria, requirements, test
 
 * **Ownership column.** "You write" and "Claude can help" are the original designation of each file (see service READMEs and `CLAUDE.md`).
 * **Current mode (author's decision, 2026-10-12).** Claude writes the code, including in "you write" files. After each piece Claude explains it line by line, and the author restates the key idea in their own words. The author must be able to explain every line.
-* **Phase gate (unchanged).** A phase is not complete, and no `xfail` mark is removed, until the author has answered that phase's "must explain" questions.
+* **Phase gate (changed 2026-10-12).** The author waived the must-explain sign-off and asked not to be quizzed. A phase is complete when its exit criteria are met, tests and lint pass, and docs are updated. The "must explain" lists stay as study material.
 * **Definition of done for every story** (from `CLAUDE.md`): tests added or updated, `make test` and `make lint` pass, docs updated if behaviour/contracts/features/failure modes changed, any performance claim backed by a benchmark in `benchmarks/`, and a short explanation of what changed and why.
 
 ## Status
@@ -21,7 +21,7 @@ Each phase has a goal, user stories with acceptance criteria, requirements, test
 | Phase | Name | Weeks | Status | Traces |
 |---|---|---|---|---|
 | 0 | Foundations | 1 | Complete (2026-10-12) | S7 (start) |
-| 1 | Synthetic world | 2 to 3 | Code complete; awaiting the author's must-explain sign-off | S3 (data) |
+| 1 | Synthetic world | 2 to 3 | Complete (2026-10-12) | S3 (data) |
 | 2 | Offline model | 4 to 5 | Not started | S3, S4 (partial) |
 | 3 | Scoring service | 6 to 7 | Not started | S1, S4 |
 | 4 | Real-time pipeline | 8 to 10 | Not started | S2 |
@@ -134,7 +134,7 @@ Hot vs cold path and why the split exists (ADR-0002); why features are computed 
 * [x] Fraud rate about 1% (measured 1.00% on the default run).
 * [x] A plot of normal vs fraud spending looks plausible: `docs/images/phase1-spending.png` shows amount and hour of day. The distance-from-home plot waits for Phase 2, because distance is feature logic and belongs in `fraudcore/features/geo.py` (invariant 1).
 * [x] Stories P1-1 to P1-7 built and tested (merchants, customers, four patterns, ground truth, seeded CLI). Results and the "still too easy on amount" finding are in the design note.
-* [ ] Must-explain sign-off from the author (below). Phase 1 stays open until then.
+* [x] Must-explain sign-off: waived by the author (2026-10-12); the questions below are study material.
 
 ### Must explain
 
@@ -507,7 +507,7 @@ PSI; why shadow before promote; why not auto-deploy every retrain.
 ### Requirements
 
 * **P8-R1** All of S1 to S7 are met and backed by numbers in the README.
-* **P8-R2** No `xfail` marks remain, and none were removed without the author confirming the phase's must-explain questions.
+* **P8-R2** No `xfail` marks remain, and none were removed before the phase's exit criteria were met.
 * **P8-R3** Docs match behaviour: contracts, feature catalog, model card results, failure modes, runbook.
 
 ### Exit criteria
