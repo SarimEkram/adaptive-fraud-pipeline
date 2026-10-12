@@ -24,7 +24,9 @@ class CardState:
     last_lat: float | None = None
     last_lon: float | None = None
 
-    known_devices: list[str] = field(default_factory=list)  # list, not set: keeps LRU order, JSON friendly
+    known_devices: list[str] = field(
+        default_factory=list
+    )  # list, not set: keeps LRU order, JSON friendly
     known_merchants: list[str] = field(default_factory=list)
 
     # Welford running stats for amount_zscore

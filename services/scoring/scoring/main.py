@@ -5,10 +5,10 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Response
-from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
-
 from fraudcore.config import Settings
 from fraudcore.schemas import Decision, Transaction
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
+
 from scoring.model import ModelRegistry
 from scoring.pipeline import ScoringPipeline
 

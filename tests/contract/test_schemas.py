@@ -4,16 +4,24 @@ from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
-from pydantic import ValidationError
-
 from fraudcore.schemas import Channel, Transaction
+from pydantic import ValidationError
 
 
 def base(**overrides):
     data = dict(
-        txn_id=uuid4(), card_id="c1", customer_id="u1", amount_cents=1299, currency="CAD",
-        merchant_id="m1", mcc="5411", merchant_country="CA", lat=43.65, lon=-79.38,
-        channel=Channel.CARD_PRESENT, event_time=datetime.now(UTC),
+        txn_id=uuid4(),
+        card_id="c1",
+        customer_id="u1",
+        amount_cents=1299,
+        currency="CAD",
+        merchant_id="m1",
+        mcc="5411",
+        merchant_country="CA",
+        lat=43.65,
+        lon=-79.38,
+        channel=Channel.CARD_PRESENT,
+        event_time=datetime.now(UTC),
     )
     data.update(overrides)
     return data

@@ -45,7 +45,10 @@ class AccountTakeover(FraudPattern):
 
 
 class MerchantCompromise(FraudPattern):
-    """Many cards that shopped at one merchant start showing fraud. Signal: harder; a stretch goal."""
+    """Many cards that shopped at one merchant start showing fraud.
+
+    Signal: harder; a stretch goal.
+    """
 
     name = "merchant_compromise"
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fraudcore.config import Settings
 from fraudcore.schemas import Decision, Transaction
+
 from scoring.model import ModelRegistry
 
 

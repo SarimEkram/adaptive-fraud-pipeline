@@ -34,6 +34,9 @@ async def launch_attack(pattern: str, victims: int = 5) -> dict:
 
 @app.websocket("/v1/live")
 async def live(ws: WebSocket) -> None:
-    """TODO(phase 6): consume transactions.scored (own consumer group, latest offset), push to clients."""
+    """TODO(phase 6): consume transactions.scored, push to clients.
+
+    Use its own consumer group and start from the latest offset.
+    """
     await ws.accept()
     raise NotImplementedError

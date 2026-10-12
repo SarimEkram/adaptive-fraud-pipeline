@@ -2,7 +2,6 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
-
 from fraudcore.features import FEATURE_NAMES, CardState, compute_features, update_state
 from fraudcore.schemas import Channel, Transaction
 
@@ -13,9 +12,18 @@ T0 = datetime(2026, 1, 1, 12, 0, tzinfo=UTC)
 
 def txn(at: datetime, amount: int = 1000, lat: float = 43.65, lon: float = -79.38) -> Transaction:
     return Transaction(
-        txn_id=uuid4(), card_id="c1", customer_id="u1", amount_cents=amount, currency="CAD",
-        merchant_id="m1", mcc="5411", merchant_country="CA", lat=lat, lon=lon,
-        channel=Channel.CARD_PRESENT, event_time=at,
+        txn_id=uuid4(),
+        card_id="c1",
+        customer_id="u1",
+        amount_cents=amount,
+        currency="CAD",
+        merchant_id="m1",
+        mcc="5411",
+        merchant_country="CA",
+        lat=lat,
+        lon=lon,
+        channel=Channel.CARD_PRESENT,
+        event_time=at,
     )
 
 

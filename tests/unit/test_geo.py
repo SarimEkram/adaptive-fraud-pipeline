@@ -1,5 +1,4 @@
 import pytest
-
 from fraudcore.features.geo import haversine_km
 
 pytestmark = pytest.mark.xfail(reason="phase 2: implement haversine_km", raises=NotImplementedError)
