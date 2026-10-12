@@ -8,7 +8,7 @@ A real-time card fraud detection system, built as a learning project. The author
 
 ## Read before doing anything
 
-1. `docs/07-roadmap.md`: find the current phase (see "Current status" below)
+1. `docs/07-roadmap.md`: find the current phase (see "Current status" below), its stories (`P<phase>-<n>`) and requirements (`P<phase>-R<n>`)
 2. `docs/02-architecture.md`: hot path vs cold path, ordering rules, latency budget
 3. `docs/03-data-contracts.md` and `libs/fraudcore/fraudcore/schemas.py`
 4. The ADRs in `docs/adr/` relevant to the files you will touch
@@ -19,12 +19,24 @@ Phase: 0 (scaffolding). Update this line when a phase is completed.
 
 ## Learning mode: ownership rules (most important section)
 
-Each service README marks files as **you write** (the author) or **Claude can help**.
+Each service README marks files as **you write** (the author) or **Claude can help**. Those labels are the original designation and are kept for reference.
 
-* **"you write" files:** do NOT write the implementation. Instead explain concepts, ask guiding questions, review the author's code, point out bugs and edge cases, and suggest tests. Short illustrative snippets of a different example are fine; the solution itself is not.
-* **"Claude can help" files:** implement freely, then explain what you wrote and why, so the author can follow every line.
-* If the author explicitly says "write it for me" in a "you write" file, do it, but explain it line by line afterwards and ask them to restate the key idea.
-* Never mark a phase complete or delete `xfail` marks without the author confirming they can answer that phase's "must explain" questions.
+**Current working mode (author's decision, 2026-10-12): Claude writes all the code, including in "you write" files. The author must understand every line.** This applies to all phases until the author changes it.
+
+For every piece of code you write, in any file:
+
+1. **Explain it line by line** afterwards, in plain language, with short analogies. Assume the author is new to Kafka, Redis, FastAPI and the ML side; define terms the first time they appear.
+2. **Ask the author to restate the key idea** in their own words. If the restatement is wrong or vague, correct it gently and ask again.
+3. **Point to the roadmap:** name the story and requirement IDs (for example `P2-1`, `P2-R1` in `docs/07-roadmap.md`) the code satisfies.
+4. **Do not move on in silence:** if you wrote a lot, pause after each file or logical chunk so the author can digest it.
+
+Phase gate (unchanged and non-negotiable):
+
+* Never mark a phase complete or delete `xfail` marks without the author confirming they can answer that phase's "must explain" questions. Writing the code does not substitute for being able to explain it.
+* Write the phase's design note (`docs/design-notes/`) with the author at the start of each phase. Claude drafts it from the author's answers to guiding questions; the author edits it until it says what they actually mean.
+* Do not start a new phase's work until the author says to.
+
+If the author later asks to write a file themselves, switch that file back to the original rule: explain concepts, ask guiding questions, review, point out bugs and edge cases, suggest tests, and do not write the solution.
 
 ## Architecture invariants (never break these)
 
@@ -60,7 +72,8 @@ make chaos           # failure scenarios
 * Tests added or updated, `make test` and `make lint` pass
 * Docs updated if behaviour, contracts, features, or failure modes changed
 * Any performance claim backed by a benchmark in `benchmarks/`
-* A short explanation to the author of what changed and why
+* A short explanation to the author of what changed and why, including the line-by-line walkthrough and restate-the-idea check from the learning mode section
+* Story and requirement IDs from `docs/07-roadmap.md` referenced in tests and commit messages
 
 ## Do not
 

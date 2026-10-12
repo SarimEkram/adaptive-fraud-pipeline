@@ -1,6 +1,6 @@
 # Design note: Phase 1, synthetic world
 
-> Fill this in yourself before writing code. Prompts below.
+> Draft this with Claude before writing code: Claude asks the prompts below, the author answers in their own words, Claude writes them up, and the author edits until it says what they mean. Stories and requirements are in `docs/07-roadmap.md` (P1-1 to P1-7, P1-R1 to P1-R6).
 
 ## Goal
 

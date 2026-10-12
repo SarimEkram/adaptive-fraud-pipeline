@@ -11,4 +11,6 @@
 | model.py | load champion/challenger from registry | shared |
 | publisher.py | non-blocking Kafka producer | Claude can help |
 
+The Owner column is the original designation. Current working mode (see `CLAUDE.md`): Claude writes the code, explains it line by line, and the author restates the key idea.
+
 Rule: nothing in this service may block on Postgres or wait on Kafka.
