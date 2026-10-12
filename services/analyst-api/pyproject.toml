@@ -1,0 +1,9 @@
+[project]
+name = "analyst-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["fraudcore", "fastapi>=0.115", "uvicorn[standard]>=0.30", "aiokafka>=0.11", "psycopg[binary]>=3.2", "httpx>=0.27"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

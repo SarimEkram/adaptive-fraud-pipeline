@@ -1,0 +1,14 @@
+[project]
+name = "fraudcore"
+version = "0.1.0"
+description = "Shared data contracts and feature logic, used by online scoring and offline training."
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "redis>=5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

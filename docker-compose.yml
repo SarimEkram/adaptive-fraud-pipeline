@@ -1,0 +1,97 @@
+name: fraud-pipeline
+
+x-app-env: &app-env
+  REDIS_URL: redis://redis:6379/0
+  KAFKA_BOOTSTRAP: redpanda:9092
+  POSTGRES_DSN: postgresql://fraud:fraud@postgres:5432/fraud
+  MODEL_DIR: /models
+
+services:
+  # ---------- infrastructure ----------
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
+    command:
+      - redpanda
+      - start
+      - --mode=dev-container
+      - --smp=1
+      - --kafka-addr=internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr=internal://redpanda:9092,external://localhost:19092
+    ports: ["19092:19092"]
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+      interval: 10s
+      retries: 10
+
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:v2.7.2
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    ports: ["8080:8080"]
+    depends_on: [redpanda]
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports: ["6379:6379"]
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fraud
+      POSTGRES_PASSWORD: fraud
+      POSTGRES_DB: fraud
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  # ---------- application ----------
+  scoring:
+    build: { context: ., dockerfile: services/scoring/Dockerfile }
+    environment: *app-env
+    ports: ["8000:8000"]
+    volumes: ["./models:/models:ro"]
+    depends_on: [redis, redpanda]
+
+  event-sink:
+    build: { context: ., dockerfile: services/event-sink/Dockerfile }
+    environment: *app-env
+    depends_on: [redpanda, postgres]
+
+  analyst-api:
+    build: { context: ., dockerfile: services/analyst-api/Dockerfile }
+    environment: *app-env
+    ports: ["8001:8001"]
+    depends_on: [redpanda, postgres]
+
+  gateway-sim:
+    build: { context: ., dockerfile: services/gateway-sim/Dockerfile }
+    environment:
+      <<: *app-env
+      SCORING_URL: http://scoring:8000
+      RATE: ${RATE:-50}
+    depends_on: [scoring]
+    profiles: ["sim"]
+
+  ml-platform:
+    build: { context: ., dockerfile: services/ml-platform/Dockerfile }
+    environment: *app-env
+    volumes: ["./models:/models", "./data:/data"]
+    profiles: ["jobs"]
+
+  # ---------- observability ----------
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes: ["./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+    profiles: ["obs"]
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    ports: ["3001:3000"]
+    depends_on: [prometheus]
+    profiles: ["obs"]
+
+volumes:
+  pgdata:
