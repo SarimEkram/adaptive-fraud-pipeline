@@ -15,3 +15,10 @@
 * **MCC**: merchant category code, a 4-digit merchant type.
 * **DLQ**: dead-letter queue for messages that cannot be processed.
 * **Velocity feature**: count or sum of activity in a recent time window.
+* **Haversine**: formula for the straight-line (great-circle) distance between two latitude/longitude points.
+* **Implied speed**: distance between two purchases divided by the time between them; impossible values suggest a stolen card.
+* **Z-score**: how many standard deviations an amount is from the card's usual amount.
+* **Welford's algorithm**: updates a running mean and variance one value at a time, without storing history.
+* **LRU (least recently used)**: when a capped list is full, drop the item that was used longest ago.
+* **Cold start**: a card with no history yet; every feature must still return a defined value.
+* **Time-based split**: train on the earliest period, validate on the next, test on the last, never random.

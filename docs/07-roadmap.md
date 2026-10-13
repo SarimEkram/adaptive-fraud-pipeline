@@ -22,7 +22,7 @@ Each phase has a goal, user stories with acceptance criteria, requirements, test
 |---|---|---|---|---|
 | 0 | Foundations | 1 | Complete (2026-10-12) | S7 (start) |
 | 1 | Synthetic world | 2 to 3 | Complete (2026-10-12) | S3 (data) |
-| 2 | Offline model | 4 to 5 | Not started | S3, S4 (partial) |
+| 2 | Offline model | 4 to 5 | In progress: features done, replay and models next | S3, S4 (partial) |
 | 3 | Scoring service | 6 to 7 | Not started | S1, S4 |
 | 4 | Real-time pipeline | 8 to 10 | Not started | S2 |
 | 5 | Reliability | 11 to 12 | Not started | S1, S2, S6 |
