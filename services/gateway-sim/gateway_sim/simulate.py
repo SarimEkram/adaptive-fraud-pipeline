@@ -16,7 +16,7 @@ from gateway_sim.customers import Customer, daily_transactions, location_at, ran
 from gateway_sim.merchants import Catalog
 from gateway_sim.patterns import PATTERNS
 
-GENERATOR_VERSION = "1.0.0"  # bump whenever the generated data would change (model card)
+GENERATOR_VERSION = "1.1.0"  # bump whenever the generated data would change (model card)
 
 # Share of fraud *cases* (attacks) by pattern, from the Phase 1 design note.
 SHARES = {

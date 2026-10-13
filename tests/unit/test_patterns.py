@@ -73,7 +73,7 @@ def test_travel_has_an_easy_and_a_hard_variant() -> None:
     easy = [g for g in gaps if g <= timedelta(minutes=90)]
     hard = [g for g in gaps if g >= timedelta(hours=3)]
     assert len(easy) + len(hard) == len(gaps)  # nothing in between
-    assert 0.2 < len(hard) / len(gaps) < 0.4
+    assert 0.4 < len(hard) / len(gaps) < 0.6  # about half are the hard variant
     assert all(g >= timedelta(minutes=20) for g in easy)
     assert all(g <= timedelta(hours=6) for g in hard)
 
@@ -121,7 +121,7 @@ def test_card_testing_easy_variant_is_a_burst_of_sub_two_dollar_charges() -> Non
     easy = [
         p for txns in _attacks("card_testing") if _span(p := _probes(txns)) <= timedelta(minutes=10)
     ]
-    assert 0.6 < len(easy) / RUNS < 0.8  # about 70% are the easy variant
+    assert 0.4 < len(easy) / RUNS < 0.6  # about half are the easy variant
     for probes in easy:
         assert 5 <= len(probes) <= 15
         assert all(t.amount_cents < 200 for t in probes)
@@ -131,7 +131,7 @@ def test_card_testing_hard_variant_is_slow_and_a_little_bigger() -> None:
     hard = [
         p for txns in _attacks("card_testing") if _span(p := _probes(txns)) > timedelta(minutes=10)
     ]
-    assert 0.2 < len(hard) / RUNS < 0.4
+    assert 0.4 < len(hard) / RUNS < 0.6
     for probes in hard:
         assert 5 <= len(probes) <= 10
         assert all(100 <= t.amount_cents <= 500 for t in probes)
@@ -170,7 +170,7 @@ def test_takeover_easy_cases_are_large_and_sometimes_risky() -> None:
     easy = [
         txns for txns in _attacks("account_takeover") if min(t.amount_cents for t in txns) >= 10_000
     ]
-    assert 0.6 < len(easy) / RUNS < 0.8
+    assert 0.4 < len(easy) / RUNS < 0.6
     hit = sum(t.merchant_id in risky for txns in easy for t in txns)
     total = sum(len(txns) for txns in easy)
     assert 0.3 < hit / total < 0.5
@@ -181,7 +181,7 @@ def test_takeover_hard_cases_are_modest_and_never_risky() -> None:
     hard = [
         txns for txns in _attacks("account_takeover") if max(t.amount_cents for t in txns) <= 9_000
     ]
-    assert 0.2 < len(hard) / RUNS < 0.4
+    assert 0.4 < len(hard) / RUNS < 0.6
     assert not any(t.merchant_id in risky for txns in hard for t in txns)
 
 

@@ -1,6 +1,6 @@
 """Fraud patterns. Each returns the attack's transactions; the caller records ground truth.
 
-Every pattern comes in an easy and a hard variant (about 30% hard) so that no single clue
+Every pattern comes in an easy and a hard variant (about half hard) so that no single clue
 gives all the fraud away.
 """
 
@@ -13,9 +13,9 @@ import numpy as np
 from fraudcore.schemas import Channel, Transaction
 
 from gateway_sim.customers import CURRENCY, Customer, location_at, new_uuid
-from gateway_sim.merchants import PLACES, TRIP_DESTINATIONS, Catalog, Merchant
+from gateway_sim.merchants import HOME_AREAS, PLACES, TRIP_DESTINATIONS, Catalog, Merchant
 
-_HARD_PROB = 0.3
+_HARD_PROB = 0.5
 
 
 class FraudPattern(ABC):
@@ -41,6 +41,21 @@ def _fraud_device(rng: np.random.Generator) -> str:
 def _far_place(rng: np.random.Generator) -> tuple[float, float]:
     place = PLACES[TRIP_DESTINATIONS[int(rng.integers(len(TRIP_DESTINATIONS)))]]
     return place.lat, place.lon
+
+
+def _intruder_location(victim: Customer, rng: np.random.Generator) -> tuple[float, float]:
+    """Where the intruder's connection appears to be, like an IP lookup.
+
+    Often the victim's own area (a residential proxy), sometimes another Toronto-area
+    neighbourhood, otherwise a far city. Never always far, or location would give it away.
+    """
+    u = rng.random()
+    if u < 0.45:
+        return victim.home_lat, victim.home_lon
+    if u < 0.60:
+        place = PLACES[HOME_AREAS[int(rng.integers(len(HOME_AREAS)))]]
+        return place.lat, place.lon
+    return _far_place(rng)
 
 
 def _choose(rng: np.random.Generator, pool: list[Merchant]) -> Merchant:
@@ -129,7 +144,7 @@ class CardTesting(FraudPattern):
     def generate(
         self, victim: Customer, now: datetime, rng: np.random.Generator, catalog: Catalog
     ) -> list[Transaction]:
-        device, where = _fraud_device(rng), _far_place(rng)
+        device, where = _fraud_device(rng), _intruder_location(victim, rng)
         hard = rng.random() < _HARD_PROB
         targets = [
             _choose(rng, _unfamiliar(victim, catalog.online + catalog.online_risky))
@@ -180,8 +195,8 @@ class AccountTakeover(FraudPattern):
 
     `now` is when the intruder gets in. Easy: 1 to 4 orders of $100 to $400 over up to three
     hours, 40% of them at crypto, gambling and similar shops. Hard: modest $25 to $90 orders
-    in ordinary categories, so mostly the new device stands out. The intruder connects from
-    far away half the time and through a local connection the other half.
+    in ordinary categories, so mostly the new device stands out. The intruder's apparent
+    location is mixed: often local, sometimes far (see `_intruder_location`).
     """
 
     name = "account_takeover"
@@ -190,7 +205,7 @@ class AccountTakeover(FraudPattern):
         self, victim: Customer, now: datetime, rng: np.random.Generator, catalog: Catalog
     ) -> list[Transaction]:
         device = _fraud_device(rng)
-        where = _far_place(rng) if rng.random() < 0.5 else (victim.home_lat, victim.home_lon)
+        where = _intruder_location(victim, rng)
         hard = rng.random() < _HARD_PROB
         count = _between(rng, 1, 4)
         offsets = np.sort(rng.integers(0, 180 * 60 + 1, count))
@@ -230,7 +245,7 @@ class MerchantCompromise(FraudPattern):
     def generate(
         self, victim: Customer, now: datetime, rng: np.random.Generator, catalog: Catalog
     ) -> list[Transaction]:
-        device, where = _fraud_device(rng), _far_place(rng)
+        device, where = _fraud_device(rng), _intruder_location(victim, rng)
         pool = _unfamiliar(victim, catalog.online)
         txns: list[Transaction] = []
         for _ in range(1 if rng.random() < 0.7 else 2):

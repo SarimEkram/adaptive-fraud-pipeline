@@ -100,4 +100,6 @@ What the first plot taught, and what changed:
 
 Still too easy on amount, to be tested in Phase 2: 58% of fraud transactions are under $2 (honest: 1.2%), and only about 11% of fraud falls inside the $2 to $103 range that holds 96% of honest spending. Card testing is mostly a stream of tiny charges, so some of this is real, and 70% of fraud transactions are card-testing probes. If the Phase 2 model scores near 0.99 PR-AUC, check this first (raise the hard share, or fold fraud into more ordinary-looking amounts) before trusting the number.
 
+**Update from Phase 2:** the check ran. LightGBM scored 0.993 PR-AUC on this data, so it was too easy. Generator 1.1.0 fixed the causes (see `docs/05-model-card.md`, "Data-quality finding"): noisy honest online locations, honest new-device and micro-burst look-alikes, mixed intruder locations, and half of all attacks as the hard variant. The numbers in the table above are from generator 1.0.0.
+
 Other limits: all amounts are in CAD, and times use fixed UTC offsets with no daylight saving. Online purchases carry the customer's own location, as an IP lookup would. Only about 134 fraud cases exist at this size, so Phase 2 will likely want more customers or days.

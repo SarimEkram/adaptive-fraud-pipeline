@@ -127,10 +127,10 @@ Filled in as phases complete. Every number links to the script that produced it 
 
 | Metric | Rules baseline | LightGBM | Notes |
 |---|---|---|---|
-| PR-AUC | TBD | TBD | time-based holdout |
-| Recall at chosen threshold | TBD | TBD | |
-| Precision at chosen threshold | TBD | TBD | |
-| Expected cost per 1k txns | TBD | TBD | cost matrix in model card |
+| PR-AUC | 0.122 | 0.966 | time-based holdout, [`mlp evaluate`](services/ml-platform/ml_platform/evaluate.py); per-pattern detail in the [model card](docs/05-model-card.md) |
+| Recall at chosen threshold | 0.345 | 0.977 | flagged = review or decline |
+| Precision at chosen threshold | 0.262 | 0.597 | thresholds chosen on validation |
+| Expected cost per 1k txns | $226.77 | $38.42 | cost matrix in model card; approving everything costs $678.63 |
 | Scoring p50 / p99 latency | TBD | TBD | at 500 TPS |
 | Max sustained TPS | TBD | TBD | |
 | Time to detect injected drift | n/a | TBD | |

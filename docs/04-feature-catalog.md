@@ -61,4 +61,4 @@ Notes:
 - [ ] Implemented in `compute.py`, state handled in `update_state`
 - [ ] Unit test including the point-in-time boundary
 - [ ] Parity test still passes
-- [ ] Ablation: model with vs without it, result noted in the model card
+- [ ] Ablation: model with vs without it, result noted in the model card (run `mlp ablate`; the first results are in `docs/05-model-card.md`)

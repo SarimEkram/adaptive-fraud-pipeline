@@ -18,4 +18,6 @@ python -m gateway_sim.main --offline --customers 1000 --days 30 --seed 42 --out 
 python notebooks/phase1_plots.py     # normal vs fraud plots -> docs/images/
 ```
 
+Generator 1.1.0 adds honest noise so the data is not trivially separable: online purchases sometimes geolocate to another city, honest customers sometimes use a new device, and have bursts of small in-app charges.
+
 Other files: `merchants.py` (places and shops), `simulate.py` (mixes honest traffic and attacks to hit `--fraud-rate`), `output.py` (Parquet: the 14 `Transaction` columns, then the ground-truth columns). The same seed gives a byte-identical file.

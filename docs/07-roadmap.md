@@ -22,7 +22,7 @@ Each phase has a goal, user stories with acceptance criteria, requirements, test
 |---|---|---|---|---|
 | 0 | Foundations | 1 | Complete (2026-10-12) | S7 (start) |
 | 1 | Synthetic world | 2 to 3 | Complete (2026-10-12) | S3 (data) |
-| 2 | Offline model | 4 to 5 | In progress: features done, replay and models next | S3, S4 (partial) |
+| 2 | Offline model | 4 to 5 | Complete (2026-10-12) | S3, S4 (partial) |
 | 3 | Scoring service | 6 to 7 | Not started | S1, S4 |
 | 4 | Real-time pipeline | 8 to 10 | Not started | S2 |
 | 5 | Reliability | 11 to 12 | Not started | S1, S2, S6 |
@@ -193,7 +193,12 @@ What makes each pattern detectable; why realistic normal behaviour matters as mu
 
 ### Exit criteria
 
-LightGBM beats rules on PR-AUC and expected cost; time-based split; feature unit tests pass.
+* [x] LightGBM beats rules on PR-AUC (0.966 vs 0.122) and on expected cost ($38.42 vs $226.77 per 1,000 transactions) on the untouched test window.
+* [x] Time-based split: 60/20/20 by time with one-day gaps (`ml_platform/split.py`, tested for disjoint, ordered windows).
+* [x] Feature unit tests pass: a point-in-time boundary test for every windowed feature, cold start, late events, bounded state, and a no-lookahead test of replay.
+* [x] Model card results table, thresholds, ablation and per-pattern results filled in (`docs/05-model-card.md`).
+* [x] Must-explain sign-off: waived by the author (2026-10-12).
+* Note: the first run scored 0.993 PR-AUC, which was treated as a data problem; generator 1.1.0 fixed it (see the model card).
 
 ### Must explain
 

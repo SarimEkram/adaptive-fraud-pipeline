@@ -2,12 +2,13 @@
 
 import argparse
 
-from ml_platform import drift, evaluate, promote, replay, train
+from ml_platform import ablate, drift, evaluate, promote, replay, train
 
 COMMANDS = {
     "replay": replay.run,
     "train": train.run,
     "evaluate": evaluate.run,
+    "ablate": ablate.run,
     "drift": drift.run,
     "promote": promote.run,
 }

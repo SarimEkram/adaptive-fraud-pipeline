@@ -66,3 +66,17 @@ Phase 1 left a known risk: amount alone separates a lot of fraud. So before trus
 * LightGBM beats rules on PR-AUC and on expected cost on the test window, with a time-based split.
 * `docs/05-model-card.md` results table and thresholds are filled in.
 * Parity of offline replay with the online path is proven later, in Phase 4.
+
+## Results and what changed along the way
+
+Full numbers, tables and the figure are in `docs/05-model-card.md`. In short, on the untouched test window LightGBM reaches PR-AUC 0.966 against 0.122 for the rules baseline, and an expected cost of $38.42 per 1,000 transactions against $226.77 (approving everything: $678.63).
+
+Decisions made during the build, beyond the ones above:
+
+* **The "too easy" plan was needed.** The first run (generator 1.0.0) scored 0.993 PR-AUC. I did not report it as a win. I measured, found the causes (always-far online fraud, noise-free honest locations, no honest small bursts or new devices, fraud timing ignoring the clock) and released generator 1.1.0 with honest noise and mixed intruder locations. Changes were made once for realism, not tuned to a target.
+* **Ablation added** (`mlp ablate`): the catalog requires "with vs without" for features. No single feature carries the model.
+* **PR-AUC and cost disagree**, and cost is the one that matters for the business. Logistic regression has the second best PR-AUC but a cost no better than rules.
+* **Per-pattern and attack-level numbers** were added to the evaluation because the headline is inflated by easy card-testing probes (73% of fraud rows).
+* **Calibration bins** are finer in the high-score tail, because equal-size deciles collapse at 1% fraud.
+* **Model files** live in `models/versions/vNNNN/` (git-ignored) and are written by `mlp train`. LightGBM needed the `libomp` system library on macOS (`brew install libomp`).
+* **Deferred:** the live path (Phase 3) still needs `pred_contrib` reason codes; the rules baseline moves to `scoring/rules.py` there.

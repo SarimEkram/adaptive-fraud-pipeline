@@ -34,6 +34,10 @@ _BIG_MEAN_CENTS = 15_000  # the $150 headphones
 _BIG_MIN_CENTS = 6_000
 _BURST_PROB = 0.08  # chance per day of a quick run of small, familiar purchases
 _BURST_KINDS = {"coffee", "transit", "convenience", "restaurant"}
+_MICRO_BURST_PROB = 0.012  # chance per day of a run of in-app or subscription charges
+_VPN_PROB = 0.03  # an online purchase whose location lookup lands in a random city
+_WORK_WIFI_PROB = 0.07  # an online purchase made from the anchor area (work, school)
+_NEW_BROWSER_PROB = 0.03  # a cleared cookie, a borrowed computer: a device never seen before
 
 
 @dataclass(frozen=True)
@@ -176,6 +180,25 @@ def _coords_at(customer: Customer, place: str) -> tuple[float, float]:
     return PLACES[place].lat, PLACES[place].lon
 
 
+def online_location(
+    customer: Customer, place: str, rng: np.random.Generator
+) -> tuple[float, float]:
+    """Where an online purchase appears to come from, like an IP lookup.
+
+    Usually the customer's real position; sometimes work or school wifi; occasionally a VPN or
+    mobile carrier that lands in another city. Honest data has to be this messy, or "far from
+    the last purchase" would be a giveaway.
+    """
+    u = rng.random()
+    if u < _VPN_PROB:
+        city = PLACES[list(PLACES)[int(rng.integers(len(PLACES)))]]
+        return city.lat, city.lon
+    if u < _VPN_PROB + _WORK_WIFI_PROB and place == customer.home_area:
+        work = PLACES[customer.anchor_area]
+        return work.lat, work.lon
+    return _coords_at(customer, place)
+
+
 def new_uuid(rng: np.random.Generator) -> UUID:
     return UUID(bytes=rng.bytes(16), version=4)  # random but reproducible from the seed
 
@@ -186,6 +209,8 @@ def _lognormal_cents(rng: np.random.Generator, mean_cents: float, sigma: float) 
 
 
 def _pick_device(customer: Customer, now: datetime, rng: np.random.Generator) -> str:
+    if rng.random() < _NEW_BROWSER_PROB:  # an honest new device now and then
+        return f"{customer.devices[1]}_b{int(rng.integers(1_000_000)):06d}"
     if rng.random() < 0.7:  # the phone is used more than the laptop
         upgraded = customer.upgrade_day is not None and now.date() >= customer.upgrade_day
         if upgraded and customer.replacement_phone:
@@ -245,7 +270,7 @@ def normal_transaction(
         amount = min(max(amount, _MIN_REGULAR_CENTS), _MAX_REGULAR_CENTS)
 
     if online:
-        lat, lon = _coords_at(customer, place)  # where the customer is, like an IP lookup
+        lat, lon = online_location(customer, place, rng)
         channel, device = Channel.ECOMMERCE, _pick_device(customer, now, rng)
     else:
         lat, lon = merchant.lat, merchant.lon
@@ -308,6 +333,47 @@ def burst_transactions(
     return txns
 
 
+def micro_burst_transactions(
+    customer: Customer, now: datetime, rng: np.random.Generator, catalog: Catalog
+) -> list[Transaction]:
+    """3 to 6 online charges of $0.99 to $4.99 at one shop within a few minutes.
+
+    In-app purchases, a game's coin packs, stacked subscriptions. The honest look-alike of card
+    testing in the online world: small, quick, online, sometimes at a "risky" category.
+    """
+    place = location_at(customer, now)
+    if place != customer.home_area:
+        return []
+    familiar = [catalog.by_id[m] for m in customer.favourite_merchants if catalog.by_id[m].online]
+    games = [m for m in catalog.online_risky if m.kind == "digital_games"]
+    shop = _choose(rng, games) if rng.random() < 0.3 or not familiar else _choose(rng, familiar)
+    device = _pick_device(customer, now, rng)
+    lat, lon = online_location(customer, place, rng)
+
+    txns: list[Transaction] = []
+    t = now
+    for _ in range(int(rng.integers(3, 7))):
+        txns.append(
+            Transaction(
+                txn_id=new_uuid(rng),
+                card_id=customer.card_id,
+                customer_id=customer.customer_id,
+                amount_cents=int(rng.choice([99, 149, 199, 299, 399, 499])),
+                currency=CURRENCY,
+                merchant_id=shop.merchant_id,
+                mcc=shop.mcc,
+                merchant_country=shop.country,
+                lat=lat,
+                lon=lon,
+                channel=Channel.ECOMMERCE,
+                device_id=device,
+                event_time=t,
+            )
+        )
+        t += timedelta(minutes=int(rng.integers(1, 4)))
+    return txns
+
+
 def random_time_on(customer: Customer, day: date, rng: np.random.Generator) -> datetime:
     """A moment on `day` (Toronto clock) drawn from the customer's hourly habits, in UTC."""
     hour = int(rng.choice(24, p=customer.hour_weights))
@@ -328,4 +394,7 @@ def daily_transactions(
             txns.append(txn)
     if rng.random() < _BURST_PROB:
         txns.extend(burst_transactions(customer, random_time_on(customer, day, rng), rng, catalog))
+    if rng.random() < _MICRO_BURST_PROB:
+        when = random_time_on(customer, day, rng)
+        txns.extend(micro_burst_transactions(customer, when, rng, catalog))
     return sorted(txns, key=lambda t: t.event_time)

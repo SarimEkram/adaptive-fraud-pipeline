@@ -15,7 +15,7 @@ A real-time card fraud detection system, built as a learning project. The author
 
 ## Current status
 
-Phase: 2 (offline model), in progress: haversine and feature code done, replay, training and evaluation next. Phases 0 and 1 completed 2026-10-12 (must-explain sign-off waived by the author). Update this line when a phase is completed.
+Phase: 3 (scoring service), not started. Phases 0, 1 and 2 completed 2026-10-12 (must-explain sign-off waived by the author). Update this line when a phase is completed.
 
 ## Learning mode: ownership rules (most important section)
 
